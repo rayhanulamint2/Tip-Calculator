@@ -61,14 +61,14 @@ private fun calculateTip(amount: Double,tipPercent: Double = 15.0):String{
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditNumberField(amountInput:String,onvaluechange:(String)->Unit,modifier: Modifier = Modifier){
+fun EditNumberField(label:String,amountInput:String,onvaluechange:(String)->Unit,modifier: Modifier = Modifier){
 
     TextField(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
         value = amountInput,
         label = {
-                Text(text = stringResource(id = R.string.bill_amount))
+                Text(text = label)
         },
         onValueChange = onvaluechange,
         modifier = modifier
@@ -78,8 +78,10 @@ fun EditNumberField(amountInput:String,onvaluechange:(String)->Unit,modifier: Mo
 @Composable
 fun TipTimeLayout(){
     var amountInput by remember{ mutableStateOf("")}
+    var percentageInput by remember{ mutableStateOf("") }
     val amount: Double = amountInput.toDoubleOrNull() ?: 0.0
-    val tip = calculateTip(amount = amount)
+    val percentage = percentageInput.toDoubleOrNull()?:0.0
+    val tip = calculateTip(amount = amount,percentage)
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -90,9 +92,13 @@ fun TipTimeLayout(){
             fontSize = 20.sp ,
             modifier = Modifier.align(alignment = Alignment.Start)
         )
-        EditNumberField(amountInput,{amountInput = it},modifier = Modifier
+        EditNumberField(stringResource(id = R.string.bill_amount),amountInput,{amountInput = it},modifier = Modifier
             .padding(bottom = 32.dp)
             .fillMaxWidth())
+        EditNumberField(stringResource(id = R.string.how_was_the_service),amountInput = percentageInput , onvaluechange = {percentageInput = it},modifier = Modifier
+            .padding(bottom = 32.dp)
+            .fillMaxWidth())
+
         Text(
             text = stringResource(id = R.string.tip_amount,tip),
             fontSize = 40.sp,
